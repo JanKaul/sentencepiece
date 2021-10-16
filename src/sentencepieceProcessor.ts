@@ -1,8 +1,8 @@
-import Module from "@weblab-notebook/sentencepiece"
+import Module from "./sentencepiece"
 
 let sentencepieceProm = Module();
 
-export class Tokenizer {
+export class SentencepieceProcessor {
     sentencePieceProcessor: any;
     constructor(spp) {
         this.sentencePieceProcessor = spp;
@@ -36,24 +36,22 @@ export class Tokenizer {
     }
 }
 
-export async function tokenizer(url: string) {
+export async function sentencepieceProcessor(url: string) {
 
     let sentencepiece = await sentencepieceProm;
 
-    let sentencePieceProcessor = new sentencepiece.SentencePieceProcessor();
+    let spp = new sentencepiece.SentencePieceProcessor();
 
     await sentencepiece.loadFile(url, "sentencepiece.model")
 
     let path = new sentencepiece.StringView("sentencepiece.model");
 
-    let load_status = sentencePieceProcessor.Load(path.getView());
-
-    console.log(load_status.ToString());
+    let load_status = spp.Load(path.getView());
 
     load_status.delete();
     path.delete();
 
-    return new Tokenizer(sentencePieceProcessor);
+    return new SentencepieceProcessor(spp);
 }
 
 export function cleanText(text: string) {

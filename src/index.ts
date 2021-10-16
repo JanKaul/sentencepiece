@@ -1,3 +1,3 @@
-import { tokenizer, cleanText } from "./tokenization";
+import { sentencepieceProcessor, cleanText } from "./sentencepieceProcessor";
 
-export { tokenizer, cleanText }
+export { sentencepieceProcessor, cleanText }
