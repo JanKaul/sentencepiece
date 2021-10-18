@@ -2,10 +2,10 @@ import Module from "./sentencepiece"
 
 let sentencepieceProm = Module();
 
-export class SentencepieceProcessor {
-    sentencePieceProcessor: any;
+export class SentencePieceProcessor {
+    processor: any;
     constructor(spp) {
-        this.sentencePieceProcessor = spp;
+        this.processor = spp;
     }
     async encodeIds(text: string) {
 
@@ -13,7 +13,7 @@ export class SentencepieceProcessor {
 
         let string_view = new sentencepiece.StringView(text);
 
-        let ids = this.sentencePieceProcessor.EncodeAsIds(string_view.getView());
+        let ids = this.processor.EncodeAsIds(string_view.getView());
 
         let arr = new Int32Array(sentencepiece.vecToView(ids));
 
@@ -28,30 +28,44 @@ export class SentencepieceProcessor {
 
         let vecIds = sentencepiece.vecFromJSArray(ids);
 
-        let str = this.sentencePieceProcessor.DecodeIds(vecIds);
+        let str = this.processor.DecodeIds(vecIds);
 
         vecIds.delete();
 
         return str;
     }
+
+    async loadVocabulary(url: string) {
+        let sentencepiece = await sentencepieceProm;
+
+        let text = await fetch(url).then(response => response.text());
+
+        sentencepiece.FS.writeFile("sentencepiece.vocab", text);
+
+        let path = new sentencepiece.StringView("sentencepiece.vocab");
+
+        this.processor.LoadVocabulary(path, -1000);
+    }
 }
 
-export async function sentencepieceProcessor(url: string) {
+export async function sentencePieceProcessor(url: string) {
 
     let sentencepiece = await sentencepieceProm;
 
     let spp = new sentencepiece.SentencePieceProcessor();
 
-    await sentencepiece.loadFile(url, "/tmp/sentencepiece.model")
+    let buffer = await fetch(url).then(response => response.arrayBuffer());
 
-    let path = new sentencepiece.StringView("/tmp/sentencepiece.model");
+    sentencepiece.FS.writeFile("sentencepiece.model", new Uint8Array(buffer));
+
+    let path = new sentencepiece.StringView("sentencepiece.model");
 
     let load_status = spp.Load(path.getView());
 
     load_status.delete();
     path.delete();
 
-    return new SentencepieceProcessor(spp);
+    return new SentencePieceProcessor(spp);
 }
 
 export function cleanText(text: string) {

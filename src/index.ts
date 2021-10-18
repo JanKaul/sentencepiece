@@ -1,3 +1,3 @@
-import { sentencepieceProcessor, cleanText } from "./sentencepieceProcessor";
+import { sentencePieceProcessor, cleanText } from "./sentencePieceProcessor";
 
-export { sentencepieceProcessor, cleanText }
+export { sentencePieceProcessor, cleanText }
