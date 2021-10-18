@@ -34,6 +34,18 @@ export class SentencepieceProcessor {
 
         return str;
     }
+
+    async loadVocabulary(url: string) {
+        let sentencepiece = await sentencepieceProm;
+
+        let text = await fetch(url).then(response => response.text());
+
+        sentencepiece.FS.writeFile("sentencepiece.vocab", text);
+
+        let path = new sentencepiece.StringView("sentencepiece.vocab");
+
+        this.sentencePieceProcessor.LoadVocabulary(path, -1000);
+    }
 }
 
 export async function sentencepieceProcessor(url: string) {
@@ -42,13 +54,13 @@ export async function sentencepieceProcessor(url: string) {
 
     let spp = new sentencepiece.SentencePieceProcessor();
 
-    await fetch(url).then(response => response.arrayBuffer).then(buffer => sentencepiece.FS.writeFile("/sentencepiece.model", buffer))
+    let buffer = await fetch(url).then(response => response.arrayBuffer());
 
-    let path = new sentencepiece.StringView("/sentencepiece.model");
+    sentencepiece.FS.writeFile("sentencepiece.model", new DataView(buffer));
+
+    let path = new sentencepiece.StringView("sentencepiece.model");
 
     let load_status = spp.Load(path.getView());
-
-    console.log(load_status.ToString);
 
     load_status.delete();
     path.delete();
