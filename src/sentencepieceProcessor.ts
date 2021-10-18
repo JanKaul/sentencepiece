@@ -42,9 +42,9 @@ export async function sentencepieceProcessor(url: string) {
 
     let spp = new sentencepiece.SentencePieceProcessor();
 
-    await sentencepiece.loadFile(url, "sentencepiece.model")
+    await sentencepiece.loadFile(url, "/tmp/sentencepiece.model")
 
-    let path = new sentencepiece.StringView("sentencepiece.model");
+    let path = new sentencepiece.StringView("/tmp/sentencepiece.model");
 
     let load_status = spp.Load(path.getView());
 
