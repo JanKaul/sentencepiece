@@ -4,7 +4,7 @@ import { sentencepieceProcessor, cleanText } from "@weblab-notebook/sentencepiec
 let text = "I am still waiting on my card?";
 let cleaned = cleanText(text);
 
-let preprocessor = await sentencepieceProcessor("https://github.com/google/sentencepiece/raw/master/python/test/test_model.model");
+let preprocessor = await sentencepieceProcessor("https://raw.githubusercontent.com/google/sentencepiece/raw/master/python/test/test_model.model");
 
 let ids = await preprocessor.encodeIds(cleaned);
 

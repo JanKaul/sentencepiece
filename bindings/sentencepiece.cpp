@@ -33,17 +33,12 @@ template <typename T> std::vector<T> vecFromJSArray(const emscripten::val &v)
     return rv;
 }
 
-void loadFile(const std::string &url, const std::string &file) {
-  emscripten_wget(url.data(),file.data());
-}
-
 EMSCRIPTEN_BINDINGS(sentencepiece) {
   emscripten::register_vector<std::string>("VectorString");
   emscripten::register_vector<int>("VectorInt");
 
   emscripten::function("vecToView",emscripten::select_overload<emscripten::val(std::vector<int>)>(&vecToView));
   emscripten::function("vecFromJSArray",emscripten::select_overload<std::vector<int>(const emscripten::val &)>(&vecFromJSArray));
-  emscripten::function<void, const std::string &, const std::string &>("loadFile", &loadFile);
 
   emscripten::class_<sentencepiece::util::Status>("Status")
     .constructor()

@@ -42,11 +42,13 @@ export async function sentencepieceProcessor(url: string) {
 
     let spp = new sentencepiece.SentencePieceProcessor();
 
-    await sentencepiece.loadFile(url, "/tmp/sentencepiece.model")
+    await fetch(url).then(response => response.arrayBuffer).then(buffer => sentencepiece.FS.writeFile("/sentencepiece.model", buffer))
 
-    let path = new sentencepiece.StringView("/tmp/sentencepiece.model");
+    let path = new sentencepiece.StringView("/sentencepiece.model");
 
     let load_status = spp.Load(path.getView());
+
+    console.log(load_status.ToString);
 
     load_status.delete();
     path.delete();
