@@ -56,7 +56,7 @@ export async function sentencepieceProcessor(url: string) {
 
     let buffer = await fetch(url).then(response => response.arrayBuffer());
 
-    sentencepiece.FS.writeFile("sentencepiece.model", new DataView(buffer));
+    sentencepiece.FS.writeFile("sentencepiece.model", new Uint8Array(buffer));
 
     let path = new sentencepiece.StringView("sentencepiece.model");
 
