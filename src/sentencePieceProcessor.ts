@@ -51,7 +51,10 @@ export class SentencePieceProcessor {
 
         let path = new sentencepiece.StringView("sentencepiece.vocab");
 
-        this.processor.LoadVocabulary(path.getView(), -1000);
+        let status = this.processor.LoadVocabulary(path.getView(), -1000);
+
+        status.delete();
+        path.delete();
     }
 }
 
