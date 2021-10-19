@@ -55,7 +55,7 @@ EMSCRIPTEN_BINDINGS(sentencepiece) {
     ;
 
   emscripten::class_<sentencepiece::SentencePieceProcessor>("SentencePieceProcessor")
-    .constructor()
+    .smart_ptr_constructor("SentencePieceProcessor", &std::make_shared<sentencepiece::SentencePieceProcessor>)
     .function("Load", emscripten::select_overload<sentencepiece::util::Status(absl::string_view)>(&sentencepiece::SentencePieceProcessor::Load))
     .function("status", &sentencepiece::SentencePieceProcessor::status)
     .function("SetEncodeExtraOptions", &sentencepiece::SentencePieceProcessor::SetEncodeExtraOptions)

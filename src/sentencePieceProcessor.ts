@@ -36,6 +36,7 @@ export class SentencePieceProcessor {
     }
 
     async loadVocabulary(url: string) {
+
         let sentencepiece = await sentencepieceProm;
 
         let text = await fetch(url).then(response => response.text());
