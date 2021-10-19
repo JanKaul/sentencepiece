@@ -15,8 +15,11 @@ export class SentencePieceProcessor {
 
         let ids = this.processor.EncodeAsIds(string_view.getView());
 
-        let arr = sentencepiece.vecToView(ids).slice();
+        let wasmHeap = sentencepiece.vecToView(ids);
 
+        let arr = wasmHeap.slice();
+
+        wasmHeap.delte();
         ids.delete();
         string_view.delete();
 
@@ -28,8 +31,11 @@ export class SentencePieceProcessor {
 
         let vecIds = sentencepiece.vecFromJSArray(ids);
 
-        let str = this.processor.DecodeIds(vecIds).slice();
+        let wasmHeap = this.processor.DecodeIds(vecIds);
 
+        let str = wasmHeap.slice();
+
+        wasmHeap.delete();
         vecIds.delete();
 
         return str;
