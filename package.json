@@ -1,6 +1,6 @@
 {
   "name": "@weblab-notebook/sentencepiece",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Sentencepiece tokenization for natural language processing.",
   "main": "dist/index.js",
   "type": "module",
