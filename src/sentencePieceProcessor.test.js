@@ -4,16 +4,16 @@ import { sentencePieceProcessor, cleanText } from "@weblab-notebook/sentencepiec
 let text = "I am still waiting on my card?";
 let cleaned = cleanText(text);
 
-let preprocessor = await sentencePieceProcessor("https://raw.githubusercontent.com/google/sentencepiece/raw/master/python/test/test_model.model");
+let preprocessor = await sentencePieceProcessor("test/30k-clean.model");
 
 let ids = await preprocessor.encodeIds(cleaned);
 
 it('encode ids', () => {
-    expect(ids).to.eql(new Int32Array([13, 1, 589, 174, 1672, 27, 51, 2056, 60]));
+    expect(ids).to.eql(new Int32Array([31, 589, 174, 1672, 27, 51, 2056, 60]));
 });
 
 let pieces = await preprocessor.decodeIds(ids);
 
 it('decode ids', () => {
-    expect(pieces).to.eql("this is some test text.");
+    expect(pieces).to.eql("i am still waiting on my card?");
 });
