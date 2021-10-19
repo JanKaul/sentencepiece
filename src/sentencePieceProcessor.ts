@@ -45,7 +45,7 @@ export class SentencePieceProcessor {
 
         let path = new sentencepiece.StringView("sentencepiece.vocab");
 
-        this.processor.LoadVocabulary(path, -1000);
+        this.processor.LoadVocabulary(path.getView(), -1000);
     }
 }
 
