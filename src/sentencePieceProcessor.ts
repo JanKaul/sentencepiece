@@ -19,7 +19,7 @@ export class SentencePieceProcessor {
 
         let arr = wasmHeap.slice();
 
-        wasmHeap.delte();
+        wasmHeap.delete();
         ids.delete();
         string_view.delete();
 
