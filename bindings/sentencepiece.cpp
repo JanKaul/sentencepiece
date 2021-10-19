@@ -20,25 +20,12 @@ template <typename T> emscripten::val vecToView(std::vector<T> vec) {
   return emscripten::val(emscripten::typed_memory_view(vec.size(),vec.data()));
 }
 
-template <typename T> std::vector<T> vecFromJSArray(const emscripten::val &v)
-{
-    std::vector<T> rv;
-
-    const auto l = v["length"].as<unsigned>();
-    rv.resize(l);
-
-    emscripten::val memoryView{emscripten::typed_memory_view(l, rv.data())};
-    memoryView.call<void>("set", v);
-
-    return rv;
-}
-
 EMSCRIPTEN_BINDINGS(sentencepiece) {
   emscripten::register_vector<std::string>("VectorString");
   emscripten::register_vector<int>("VectorInt");
 
   emscripten::function("vecToView",emscripten::select_overload<emscripten::val(std::vector<int>)>(&vecToView));
-  emscripten::function("vecFromJSArray",emscripten::select_overload<std::vector<int>(const emscripten::val &)>(&vecFromJSArray));
+  emscripten::function("vecFromJSArray",emscripten::select_overload<std::vector<int>(const emscripten::val &)>(&emscripten::vecFromJSArray));
 
   emscripten::class_<sentencepiece::util::Status>("Status")
     .constructor()
