@@ -15,7 +15,7 @@ export class SentencePieceProcessor {
 
         let ids = this.processor.EncodeAsIds(string_view.getView());
 
-        let arr = new Int32Array(sentencepiece.vecToView(ids));
+        let arr = sentencepiece.vecToView(ids).slice();
 
         ids.delete();
         string_view.delete();
