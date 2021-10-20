@@ -31,11 +31,8 @@ export class SentencePieceProcessor {
 
         let vecIds = sentencepiece.vecFromJSArray(ids);
 
-        let heap = this.processor.DecodeIds(vecIds);
+        let str = this.processor.DecodeIds(vecIds).slice();
 
-        let str = heap.slice();
-
-        heap.delete();
         vecIds.delete();
 
         return str;
