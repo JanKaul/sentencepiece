@@ -13,11 +13,14 @@ export class SentencePieceProcessor {
 
         let string_view = new sentencepiece.StringView(text);
 
-        let ids = this.processor.EncodeAsIds(string_view.getView());
+        let absl_string_view = string_view.getView();
+
+        let ids = this.processor.EncodeAsIds(absl_string_view);
 
         let arr = sentencepiece.vecToView(ids).slice();
 
         ids.delete();
+        absl_string_view.delete();
         string_view.delete();
 
         return arr;
@@ -43,12 +46,15 @@ export class SentencePieceProcessor {
 
         sentencepiece.FS.writeFile("sentencepiece.vocab", text);
 
-        let path = new sentencepiece.StringView("sentencepiece.vocab");
+        let string_view = new sentencepiece.StringView("sentencepiece.vocab");
 
-        let status = this.processor.LoadVocabulary(path.getView(), -1000);
+        let absl_string_view = string_view.getView();
+
+        let status = this.processor.LoadVocabulary(absl_string_view, -1000);
 
         status.delete();
-        path.delete();
+        absl_string_view.delete();
+        string_view.delete();
     }
 }
 
@@ -62,12 +68,15 @@ export async function sentencePieceProcessor(url: string) {
 
     sentencepiece.FS.writeFile("sentencepiece.model", new Uint8Array(buffer));
 
-    let path = new sentencepiece.StringView("sentencepiece.model");
+    let string_view = new sentencepiece.StringView("sentencepiece.model");
 
-    let load_status = spp.Load(path.getView());
+    let absl_string_view = string_view.getView();
+
+    let load_status = spp.Load(absl_string_view);
 
     load_status.delete();
-    path.delete();
+    absl_string_view.delete();
+    string_view.delete();
 
     return new SentencePieceProcessor(spp);
 }
