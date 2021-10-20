@@ -1,15 +1,13 @@
 import Module from "./sentencepiece"
 
-let sentencepieceProm = Module();
+let sentencepiece = await Module();
 
 export class SentencePieceProcessor {
     processor: any;
     constructor(spp) {
         this.processor = spp;
     }
-    async encodeIds(text: string) {
-
-        let sentencepiece = await sentencepieceProm;
+    encodeIds(text: string) {
 
         let string_view = new sentencepiece.StringView(text);
 
@@ -25,9 +23,7 @@ export class SentencePieceProcessor {
 
         return arr;
     }
-    async decodeIds(ids: Int32Array) {
-
-        let sentencepiece = await sentencepieceProm;
+    decodeIds(ids: Int32Array) {
 
         let vecIds = sentencepiece.vecFromJSArray(ids);
 
@@ -39,8 +35,6 @@ export class SentencePieceProcessor {
     }
 
     async loadVocabulary(url: string) {
-
-        let sentencepiece = await sentencepieceProm;
 
         let text = await fetch(url).then(response => response.text());
 
@@ -59,8 +53,6 @@ export class SentencePieceProcessor {
 }
 
 export async function sentencePieceProcessor(url: string) {
-
-    let sentencepiece = await sentencepieceProm;
 
     let spp = new sentencepiece.SentencePieceProcessor();
 

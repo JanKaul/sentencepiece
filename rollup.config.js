@@ -9,5 +9,5 @@ export default {
         dir: 'dist',
         format: 'es'
     },
-    plugins: [nodeResolve({ browser: true }), commonjs(), wasm(), typescript({ target: "es6", downlevelIteration: true })]
+    plugins: [nodeResolve({ browser: true }), commonjs(), wasm(), typescript({ target: "es2017", downlevelIteration: true })]
 };
