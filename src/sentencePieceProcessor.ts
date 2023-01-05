@@ -1,21 +1,40 @@
 import Module from "./sentencepiece"
-
-let sentencepiece = await Module();
+import * as fs from "fs"
 
 export class SentencePieceProcessor {
+
     processor: any;
-    constructor(spp) {
-        this.processor = spp;
+    sentencepiece: any;
+
+    // load model
+    async load(url: string) {
+
+        this.sentencepiece = await Module();;
+
+        // change to fs read model file
+        this.sentencepiece.FS.writeFile("sentencepiece.model", fs.readFileSync(url));
+        let string_view = new this.sentencepiece.StringView("sentencepiece.model");
+        let absl_string_view = string_view.getView();
+
+        this.processor = new this.sentencepiece.SentencePieceProcessor();
+        let load_status = this.processor.Load(absl_string_view);
+
+        load_status.delete();
+        absl_string_view.delete();
+        string_view.delete();
+
     }
+
+
     encodeIds(text: string) {
 
-        let string_view = new sentencepiece.StringView(text);
+        let string_view = new this.sentencepiece.StringView(text);
 
         let absl_string_view = string_view.getView();
 
         let ids = this.processor.EncodeAsIds(absl_string_view);
 
-        let arr = sentencepiece.vecToView(ids).slice();
+        let arr = this.sentencepiece.vecToView(ids).slice();
 
         ids.delete();
         absl_string_view.delete();
@@ -23,9 +42,10 @@ export class SentencePieceProcessor {
 
         return arr;
     }
+
     decodeIds(ids: Int32Array) {
 
-        let vecIds = sentencepiece.vecFromJSArray(ids);
+        let vecIds = this.sentencepiece.vecFromJSArray(ids);
 
         let str = this.processor.DecodeIds(vecIds).slice();
 
@@ -38,9 +58,9 @@ export class SentencePieceProcessor {
 
         let text = await fetch(url).then(response => response.text());
 
-        sentencepiece.FS.writeFile("sentencepiece.vocab", text);
+        this.sentencepiece.FS.writeFile("sentencepiece.vocab", text);
 
-        let string_view = new sentencepiece.StringView("sentencepiece.vocab");
+        let string_view = new this.sentencepiece.StringView("sentencepiece.vocab");
 
         let absl_string_view = string_view.getView();
 
@@ -52,29 +72,8 @@ export class SentencePieceProcessor {
     }
 }
 
-export async function sentencePieceProcessor(url: string) {
-
-    let spp = new sentencepiece.SentencePieceProcessor();
-
-    let buffer = await fetch(url).then(response => response.arrayBuffer());
-
-    sentencepiece.FS.writeFile("sentencepiece.model", new Uint8Array(buffer));
-
-    let string_view = new sentencepiece.StringView("sentencepiece.model");
-
-    let absl_string_view = string_view.getView();
-
-    let load_status = spp.Load(absl_string_view);
-
-    load_status.delete();
-    absl_string_view.delete();
-    string_view.delete();
-
-    return new SentencePieceProcessor(spp);
-}
-
 export function cleanText(text: string) {
-    const stringBuilder = [];
+    const stringBuilder: string[] = [];
     let originalCharIndex = 0, newCharIndex = 0;
     for (const ch of text) {
         // Skip the characters that cannot be used.

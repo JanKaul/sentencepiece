@@ -1,4 +1,4 @@
-import { sentencePieceProcessor, cleanText } from "./sentencePieceProcessor";
+import { SentencePieceProcessor, cleanText } from "./sentencePieceProcessor";
 
-export { sentencePieceProcessor, cleanText }
-export default { sentencePieceProcessor, cleanText }
+export { SentencePieceProcessor, cleanText }
+export default { SentencePieceProcessor, cleanText }
