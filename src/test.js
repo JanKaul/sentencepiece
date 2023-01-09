@@ -7,11 +7,13 @@ async function main() {
     let cleaned = cleanText(text);
 
     let spp = new SentencePieceProcessor();
-    await spp.load(`${ROOT}/test/smart.model`)
-
+    await spp.load(`${ROOT}/test/30k-clean.model`)
     let ids = spp.encodeIds(cleaned);
     console.log(ids)
     let str = spp.decodeIds(ids)
     console.log(str)
+
+    let pieces = spp.encodePieces(cleaned);
+    console.log(pieces)
 }
 main()

@@ -9,7 +9,7 @@ export class SentencePieceProcessor {
     // load model
     async load(url: string) {
 
-        this.sentencepiece = await Module();;
+        this.sentencepiece = await Module();
 
         // change to fs read model file
         this.sentencepiece.FS.writeFile("sentencepiece.model", fs.readFileSync(url));
@@ -34,7 +34,7 @@ export class SentencePieceProcessor {
 
         let ids = this.processor.EncodeAsIds(absl_string_view);
 
-        let arr = this.sentencepiece.vecToView(ids).slice();
+        let arr = this.sentencepiece.vecToIntArray(ids);
 
         ids.delete();
         absl_string_view.delete();
@@ -42,6 +42,24 @@ export class SentencePieceProcessor {
 
         return arr;
     }
+
+    encodePieces(text: string) {
+
+        let string_view = new this.sentencepiece.StringView(text);
+
+        let absl_string_view = string_view.getView();
+
+        let ids = this.processor.EncodeAsPieces(absl_string_view);
+
+        let arr = this.sentencepiece.vecToStringArray(ids);
+
+        ids.delete();
+        absl_string_view.delete();
+        string_view.delete();
+
+        return arr;
+    }
+
 
     decodeIds(ids: Int32Array) {
 
