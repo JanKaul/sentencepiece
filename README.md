@@ -27,24 +27,18 @@ const ROOT = require('app-root-path')
 
 async function main() {
 
-    let text = "I am still waiting on my card?";
-    let cleaned = cleanText(text);
+    let text = "I am still waiting on my card?"
+    let cleaned = cleanText(text)
 
-    let spp = new SentencePieceProcessor(); // new an spp object
-    await spp.load(`${ROOT}/test/smart.model`); // load model
-
-    let ids = spp.encodeIds(cleaned);
-    console.log(ids) 
-    /*
-    Int32Array(9) [
-        90, 4184, 5522,
-        1547, 1148,  693,
-        4839, 6187,    0
-    ]
-    */
-    let str = spp.decodeIds(ids)
+    let spp = new SentencePieceProcessor()
+    await spp.load(`${ROOT}/test/30k-clean.model`)
+    let ids = spp.encodeIds(cleaned)
+    console.log(ids)
+    let str = spp.decodeIds(ids) // list ids->number
     console.log(str)
-    // i am still waiting on my card ⁇
+
+    let pieces = spp.encodePieces(cleaned) // list tokens->string
+    console.log(pieces)
 }
 main()
 
@@ -52,4 +46,6 @@ main()
 
 ## Note
 
-devilyouwei updated this repo to make this module support the js `require` keyword and added the using example
+- devilyouwei updated this repo to make this module support the js `require` keyword and added the using example.
+
+- 2023-1-10, devilyouwei added `encodePieces`.
