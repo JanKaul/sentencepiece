@@ -13,11 +13,11 @@ export class SentencePieceProcessor {
 
         // change to fs read model file
         this.sentencepiece.FS.writeFile("sentencepiece.model", fs.readFileSync(url));
-        let string_view = new this.sentencepiece.StringView("sentencepiece.model");
-        let absl_string_view = string_view.getView();
+        const string_view = new this.sentencepiece.StringView("sentencepiece.model");
+        const absl_string_view = string_view.getView();
 
         this.processor = new this.sentencepiece.SentencePieceProcessor();
-        let load_status = this.processor.Load(absl_string_view);
+        const load_status = this.processor.Load(absl_string_view);
 
         load_status.delete();
         absl_string_view.delete();
@@ -28,15 +28,17 @@ export class SentencePieceProcessor {
 
     encodeIds(text: string) {
 
-        let string_view = new this.sentencepiece.StringView(text);
+        const string_view = new this.sentencepiece.StringView(text);
 
-        let absl_string_view = string_view.getView();
+        const absl_string_view = string_view.getView();
 
-        let ids = this.processor.EncodeAsIds(absl_string_view);
+        const data = this.processor.EncodeAsIds(absl_string_view);
 
-        let arr = this.sentencepiece.vecToIntArray(ids);
+        const arr: Array<number> = []
+        for (let i = 0; i < data.size(); i++)
+            arr.push(data.get(i) as number)
 
-        ids.delete();
+        data.delete();
         absl_string_view.delete();
         string_view.delete();
 
@@ -45,17 +47,21 @@ export class SentencePieceProcessor {
 
     encodePieces(text: string) {
 
-        let string_view = new this.sentencepiece.StringView(text);
+        const string_view = new this.sentencepiece.StringView(text);
 
-        let absl_string_view = string_view.getView();
+        const absl_string_view = string_view.getView();
 
-        let ids = this.processor.EncodeAsPieces(absl_string_view);
+        const data = this.processor.EncodeAsPieces(absl_string_view);
 
-        let arr = this.sentencepiece.vecToStringArray(ids);
+        // let arr = this.sentencepiece.vecToStringArray(ids);
+        const arr: Array<string> = []
+        for (let i = 0; i < data.size(); i++)
+            arr.push(data.get(i) as string)
 
-        ids.delete();
+        data.delete();
         absl_string_view.delete();
         string_view.delete();
+
 
         return arr;
     }
@@ -63,26 +69,24 @@ export class SentencePieceProcessor {
 
     decodeIds(ids: Int32Array) {
 
-        let vecIds = this.sentencepiece.vecFromJSArray(ids);
+        const vecIds = this.sentencepiece.vecFromJSArray(ids);
 
-        let str = this.processor.DecodeIds(vecIds).slice();
+        const str = this.processor.DecodeIds(vecIds).slice();
 
         vecIds.delete();
 
         return str;
     }
 
-    async loadVocabulary(url: string) {
+    loadVocabulary(url: string) {
 
-        let text = await fetch(url).then(response => response.text());
+        this.sentencepiece.FS.writeFile("sentencepiece.vocab", fs.readFileSync(url));
 
-        this.sentencepiece.FS.writeFile("sentencepiece.vocab", text);
+        const string_view = new this.sentencepiece.StringView("sentencepiece.vocab");
 
-        let string_view = new this.sentencepiece.StringView("sentencepiece.vocab");
+        const absl_string_view = string_view.getView();
 
-        let absl_string_view = string_view.getView();
-
-        let status = this.processor.LoadVocabulary(absl_string_view, -1000);
+        const status = this.processor.LoadVocabulary(absl_string_view, -1000);
 
         status.delete();
         absl_string_view.delete();
