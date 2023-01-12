@@ -7,7 +7,7 @@ export default {
     input: 'src/index.ts',
     output: {
         dir: 'dist',
-        format: 'es'
+        format: 'cjs'
     },
-    plugins: [nodeResolve({ browser: true }), commonjs(), wasm(), typescript({ target: "es2017", downlevelIteration: true })]
+    plugins: [nodeResolve({ browser: true }), commonjs(), wasm(), typescript({ target: "es5", downlevelIteration: true })]
 };

@@ -1,50 +1,92 @@
 import Module from "./sentencepiece"
-
-let sentencepiece = await Module();
+import * as fs from "fs"
 
 export class SentencePieceProcessor {
+
     processor: any;
-    constructor(spp) {
-        this.processor = spp;
+    sentencepiece: any;
+
+    // load model
+    async load(url: string) {
+
+        this.sentencepiece = await Module();
+
+        // change to fs read model file
+        this.sentencepiece.FS.writeFile("sentencepiece.model", fs.readFileSync(url));
+        const string_view = new this.sentencepiece.StringView("sentencepiece.model");
+        const absl_string_view = string_view.getView();
+
+        this.processor = new this.sentencepiece.SentencePieceProcessor();
+        const load_status = this.processor.Load(absl_string_view);
+
+        load_status.delete();
+        absl_string_view.delete();
+        string_view.delete();
+
     }
+
+
     encodeIds(text: string) {
 
-        let string_view = new sentencepiece.StringView(text);
+        const string_view = new this.sentencepiece.StringView(text);
 
-        let absl_string_view = string_view.getView();
+        const absl_string_view = string_view.getView();
 
-        let ids = this.processor.EncodeAsIds(absl_string_view);
+        const data = this.processor.EncodeAsIds(absl_string_view);
 
-        let arr = sentencepiece.vecToView(ids).slice();
+        const arr: Array<number> = []
+        for (let i = 0; i < data.size(); i++)
+            arr.push(data.get(i) as number)
 
-        ids.delete();
+        data.delete();
         absl_string_view.delete();
         string_view.delete();
 
         return arr;
     }
+
+    encodePieces(text: string) {
+
+        const string_view = new this.sentencepiece.StringView(text);
+
+        const absl_string_view = string_view.getView();
+
+        const data = this.processor.EncodeAsPieces(absl_string_view);
+
+        // let arr = this.sentencepiece.vecToStringArray(ids);
+        const arr: Array<string> = []
+        for (let i = 0; i < data.size(); i++)
+            arr.push(data.get(i) as string)
+
+        data.delete();
+        absl_string_view.delete();
+        string_view.delete();
+
+
+        return arr;
+    }
+
+
     decodeIds(ids: Int32Array) {
 
-        let vecIds = sentencepiece.vecFromJSArray(ids);
+        const vecIds = this.sentencepiece.vecFromJSArray(ids);
 
-        let str = this.processor.DecodeIds(vecIds).slice();
+        const str = this.processor.DecodeIds(vecIds).slice();
 
         vecIds.delete();
 
         return str;
     }
 
-    async loadVocabulary(url: string) {
+    loadVocabulary(url: string) {
 
-        let text = await fetch(url).then(response => response.text());
+        this.sentencepiece.FS.writeFile("sentencepiece.vocab", fs.readFileSync(url));
 
-        sentencepiece.FS.writeFile("sentencepiece.vocab", text);
+        const string_view = new this.sentencepiece.StringView("sentencepiece.vocab");
 
-        let string_view = new sentencepiece.StringView("sentencepiece.vocab");
+        const absl_string_view = string_view.getView();
 
-        let absl_string_view = string_view.getView();
-
-        let status = this.processor.LoadVocabulary(absl_string_view, -1000);
+        const status = this.processor.LoadVocabulary(absl_string_view, -1000);
 
         status.delete();
         absl_string_view.delete();
@@ -52,29 +94,8 @@ export class SentencePieceProcessor {
     }
 }
 
-export async function sentencePieceProcessor(url: string) {
-
-    let spp = new sentencepiece.SentencePieceProcessor();
-
-    let buffer = await fetch(url).then(response => response.arrayBuffer());
-
-    sentencepiece.FS.writeFile("sentencepiece.model", new Uint8Array(buffer));
-
-    let string_view = new sentencepiece.StringView("sentencepiece.model");
-
-    let absl_string_view = string_view.getView();
-
-    let load_status = spp.Load(absl_string_view);
-
-    load_status.delete();
-    absl_string_view.delete();
-    string_view.delete();
-
-    return new SentencePieceProcessor(spp);
-}
-
 export function cleanText(text: string) {
-    const stringBuilder = [];
+    const stringBuilder: string[] = [];
     let originalCharIndex = 0, newCharIndex = 0;
     for (const ch of text) {
         // Skip the characters that cannot be used.
